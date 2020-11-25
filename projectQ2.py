@@ -3,7 +3,7 @@ import numpy as np
 import mysql.connector
 
 conn = mysql.connector.connect(user='root', password='Antonis2008Root!',
-       host='127.0.0.1',allow_local_infile=True, database='books')
+       host='127.0.0.1',allow_local_infile=True)
 cursor = conn.cursor(buffered=True)
 
 cursor.execute("DROP DATABASE IF EXISTS books")
@@ -39,7 +39,7 @@ cursor.execute("""
 load data local infile  'BX_Book_Ratings.csv' 
 into table BX_Book_Ratings 
 character set latin1
-fields terminated by ';' optionally enclosed by '"' escaped by '"' 
+fields terminated by ';' optionally enclosed by '"' 
 lines terminated by '\n' 
 ignore 1 lines;
 """)
@@ -47,7 +47,7 @@ cursor.execute("""
 load data local infile  'BX_Users.csv' 
 into table BX_Users 
 character set latin1
-fields terminated by ';' optionally enclosed by '"' escaped by '"' 
+fields terminated by ';' optionally enclosed by '"' 
 lines terminated by '\n' 
 ignore 1 lines;
 """)
@@ -55,12 +55,12 @@ cursor.execute("""
 load data local infile  'BX_Books_clean.csv' 
 into table BX_Books 
 character set latin1
-fields terminated by ';' optionally enclosed by '"' escaped by '"' 
+fields terminated by ';' optionally enclosed by '"' 
 lines terminated by '\n' 
 ignore 1 lines;
 """)
 
-df=pd.read_sql_query("SELECT * FROM bx_book_ratings",conn)
+df=pd.read_sql_query("SELECT * FROM bx_users",conn)
 print(df)
 
 
