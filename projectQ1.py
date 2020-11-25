@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from scipy import stats
 
 #Q1 read-shape-info and do we nned info from read me file as comments?edw mporoume na to grapsoume kalitera
 books = pd.read_csv('BX-Books_clean.csv',delimiter=';',encoding='Latin-1',dtype={3:'object'})
@@ -29,4 +30,17 @@ agegroups = pd.cut(bru['Age'], bins=[0, 20, 40, 60, 80, np.inf])
 ageranges = bru.groupby(agegroups)[['ISBN']].count()
 print(ageranges.sort_values(['ISBN'],ascending=False))
 
-#Outlier detection
+#Book Outlier detection
+booksread = bru['ISBN'].value_counts()
+bookoutliers=booksread[((booksread-booksread.mean()).abs() > 4*booksread.std())]
+print('\n',bookoutliers)
+
+#Author pop outlier detection
+authorbook = bru['Book-Author'].value_counts()
+authoroutliers=authorbook[((authorbook-authorbook.mean()).abs() > 4*authorbook.std())]
+print(authoroutliers)
+
+#User outlier detection
+userread = bru.groupby('User-ID')['ISBN'].count()
+useroutliers=userread[((userread-userread.mean()).abs() > 4*userread.std())]
+print(useroutliers.sort_values(ascending=False))
