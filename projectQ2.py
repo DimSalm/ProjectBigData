@@ -35,11 +35,33 @@ CREATE TABLE BX_Book_Ratings (
   Book_Rating int(11) NOT NULL default '0',
   PRIMARY KEY  (User_ID,ISBN)
 )""")
+cursor.execute("""
+load data local infile  'BX_Book_Ratings.csv' 
+into table BX_Book_Ratings 
+character set latin1
+fields terminated by ';' optionally enclosed by '"' escaped by '"' 
+lines terminated by '\n' 
+ignore 1 lines;
+""")
+cursor.execute("""
+load data local infile  'BX_Users.csv' 
+into table BX_Users 
+character set latin1
+fields terminated by ';' optionally enclosed by '"' escaped by '"' 
+lines terminated by '\n' 
+ignore 1 lines;
+""")
+cursor.execute("""
+load data local infile  'BX_Books_clean.csv' 
+into table BX_Books 
+character set latin1
+fields terminated by ';' optionally enclosed by '"' escaped by '"' 
+lines terminated by '\n' 
+ignore 1 lines;
+""")
 
-
-
-
-
+df=pd.read_sql_query("SELECT * FROM bx_book_ratings",conn)
+print(df)
 
 
 
