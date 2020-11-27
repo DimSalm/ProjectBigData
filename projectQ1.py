@@ -34,13 +34,16 @@ print(ageranges.sort_values(['ISBN'],ascending=False))
 booksread = bru['ISBN'].value_counts()
 bookoutliers=booksread[((booksread-booksread.mean()).abs() > 4*booksread.std())]
 print('\n',bookoutliers)
+dfbooks = booksread[~((booksread-booksread.mean()).abs() > 4*booksread.std())]
 
 #Author pop outlier detection
 authorbook = bru['Book_Author'].value_counts()
-authoroutliers=authorbook[((authorbook-authorbook.mean()).abs() > 4*authorbook.std())]
+authoroutliers = authorbook[((authorbook-authorbook.mean()).abs() > 4*authorbook.std())]
 print(authoroutliers)
+dfauthor = authorbook[~((authorbook-authorbook.mean()).abs() > 4*authorbook.std())]
 
 #User outlier detection
 userread = bru.groupby('User_ID')['ISBN'].count()
-useroutliers=userread[((userread-userread.mean()).abs() > 4*userread.std())]
+useroutliers = userread[((userread-userread.mean()).abs() > 4*userread.std())]
 print(useroutliers.sort_values(ascending=False))
+dfusers = userread[~((userread-userread.mean()).abs() > 4*userread.std())]

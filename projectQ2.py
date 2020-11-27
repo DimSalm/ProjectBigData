@@ -52,7 +52,7 @@ lines terminated by '\n'
 ignore 1 lines;
 """)
 cursor.execute("""
-load data local infile  'BX_Books_clean.csv' 
+load data local infile  'BX_Books_clean.cs  
 into table BX_Books 
 character set latin1
 fields terminated by ';' optionally enclosed by '"' 
@@ -72,6 +72,6 @@ print(df)
 
 
 
-conn.commit()
+
 cursor.close()
 conn.close()
