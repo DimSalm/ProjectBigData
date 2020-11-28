@@ -63,35 +63,36 @@ print(ageranges)
 
 #rating Outlier detection where rating=0 and where number of times the book was read is 1
 booksread = ratings_clean[~(ratings_clean['Book-Rating']==0)]
-print(booksread)
-booksread2=booksread.groupby(['ISBN']).count()
-booksread2_clean=booksread[booksread2['Book-Rating']>1]
-print(booksread2_clean)
-poutsaki=booksread.merge(booksread2_clean,left_on=['ISBN'],right_on='ISBN',how='right')
-print(poutsaki)
-
+booksread2=booksread.groupby(['ISBN'])[['Book-Rating']].count()
+booksread3=booksread2[booksread2['Book-Rating']>6]
+booksread4=pd.merge(booksread,booksread3,on='ISBN',how='inner')
+ratingsoutliers=booksread4.drop('Book-Rating_y',axis=1)
+ratingsoutliers = ratingsoutliers.rename(columns={'Book-Rating_x': 'Book-Rating'})
+print(ratingsoutliers)
 
 #book pop outlier detection based on author
-#authorread = books_clean[books_clean['Book-Author'].isin(authorpop['Book-Author']==1)]
-#print(authorread)
+booksoutliers = books_clean[books_clean['ISBN'].isin(ratingsoutliers['ISBN'])]
+print(booksoutliers)
+
+#User outlier detection
+users1 = users_clean[users_clean['User-ID'].isin(ratingsoutliers['User-ID'])]
+
+br3=pd.merge(ratingsoutliers,users1,on='User-ID',how='inner')
+usersread2 = br3.groupby(['User-ID'])[['Book-Rating']].count().sort_values(['Book-Rating'],ascending=False)
+usersread3=usersread2[usersread2['Book-Rating'] < 2000]
+br4=pd.merge(usersread3,ratingsoutliers,on='User-ID',how='inner')
+ratingsfinal=br4.drop('Book-Rating_x',axis=1)
+ratingsfinal=ratingsfinal.rename(columns={'Book-Rating_y':'Book-Rating'})
+usersfinal = users1[users1['User-ID'].isin(ratingsfinal['User-ID'])]
+booksfinal= booksoutliers[booksoutliers['ISBN'].isin(ratingsfinal['ISBN'])]
+print(booksfinal)
+print(ratingsfinal)
+print(usersfinal)
+booksfinal=booksfinal.rename(columns={'Book-Author':'Book_Author','Book-Title':'Book_Title','Year-Of-Publication':'Year_Of_Publication'})
+ratingsfinal=ratingsfinal.rename(columns={'User-ID':'User_ID','Book-Rating':'Book_Rating'})
+usersfinal=usersfinal.rename(columns={'User-ID':'User_ID'})
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#users.to_csv(r'C:\Users\dimsa\Desktop\ProjectBigData\poutsa.csv',index=False,na_rep='NULL')
+booksfinal.to_csv(r'C:\Users\dimsa\Desktop\ProjectBigData\BX_Books.csv',index=False,na_rep='NULL')
+ratingsfinal.to_csv(r'C:\Users\dimsa\Desktop\ProjectBigData\BX_Book_Ratings.csv',index=False,na_rep='NULL')
+usersfinal.to_csv(r'C:\Users\dimsa\Desktop\ProjectBigData\BX_Users.csv',index=False,na_rep='NULL')
