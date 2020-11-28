@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import mysql.connector
 
-conn = mysql.connector.connect(user='root', password='Antonis2008Root!',
+conn = mysql.connector.connect(user='root', password='',
        host='127.0.0.1',allow_local_infile=True)
 cursor = conn.cursor(buffered=True)
 
