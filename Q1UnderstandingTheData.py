@@ -61,7 +61,7 @@ agegroups = pd.cut(bru2['Age'], bins=[14, 20, 40, 60, 80,90])
 ageranges = bru2.groupby(agegroups)[['Book-Rating']].count().sort_values(['Book-Rating'],ascending=False)
 print(ageranges)
 
-#rating Outlier detection where rating=0 and where number of times the book was read is 1
+#rating Outlier detection where rating=0 and where number of times the book was read is up to 6
 booksread = ratings_clean[~(ratings_clean['Book-Rating']==0)]
 booksread2=booksread.groupby(['ISBN'])[['Book-Rating']].count()
 booksread3=booksread2[booksread2['Book-Rating']>6]
@@ -70,7 +70,7 @@ ratingsoutliers=booksread4.drop('Book-Rating_y',axis=1)
 ratingsoutliers = ratingsoutliers.rename(columns={'Book-Rating_x': 'Book-Rating'})
 print(ratingsoutliers)
 
-#book pop outlier detection based on author
+#book pop outlier detection based on author getting rid of idbn from ratings
 booksoutliers = books_clean[books_clean['ISBN'].isin(ratingsoutliers['ISBN'])]
 print(booksoutliers)
 
@@ -88,11 +88,12 @@ booksfinal= booksoutliers[booksoutliers['ISBN'].isin(ratingsfinal['ISBN'])]
 print(booksfinal)
 print(ratingsfinal)
 print(usersfinal)
+
 booksfinal=booksfinal.rename(columns={'Book-Author':'Book_Author','Book-Title':'Book_Title','Year-Of-Publication':'Year_Of_Publication'})
 ratingsfinal=ratingsfinal.rename(columns={'User-ID':'User_ID','Book-Rating':'Book_Rating'})
 usersfinal=usersfinal.rename(columns={'User-ID':'User_ID'})
 
 
-booksfinal.to_csv(r'C:\Users\dimsa\Desktop\ProjectBigData\BX_Books.csv',index=False,na_rep='NULL')
-ratingsfinal.to_csv(r'C:\Users\dimsa\Desktop\ProjectBigData\BX_Book_Ratings.csv',index=False,na_rep='NULL')
-usersfinal.to_csv(r'C:\Users\dimsa\Desktop\ProjectBigData\BX_Users.csv',index=False,na_rep='NULL')
+#booksfinal.to_csv(r'C:\Users\dimsa\Desktop\ProjectBigData\BX_Books.csv',index=False,na_rep='NULL')
+#ratingsfinal.to_csv(r'C:\Users\dimsa\Desktop\ProjectBigData\BX_Book_Ratings.csv',index=False,na_rep='NULL')
+#usersfinal.to_csv(r'C:\Users\dimsa\Desktop\ProjectBigData\BX_Users.csv',index=False,na_rep='NULL')
