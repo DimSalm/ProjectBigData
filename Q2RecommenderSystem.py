@@ -1,6 +1,6 @@
 import mysql.connector
-import pandas as pd
-conn = mysql.connector.connect(user='root', password='', host='127.0.0.1', allow_local_infile=True)
+
+conn = mysql.connector.connect(user='root', password='Antonis2008Root!', host='127.0.0.1', allow_local_infile=True)
 cursor = conn.cursor(buffered=True)
 cursor.execute("drop database if exists books")
 cursor.execute("CREATE DATABASE books")
@@ -31,9 +31,6 @@ fields terminated by ','
 lines terminated by '\r\n' 
 ignore 1 lines;
 """)
-
-df=pd.read_sql_query("SELECT * FROM bx_book_ratings",conn)
-print(df)
 
 conn.commit()
 cursor.close()
