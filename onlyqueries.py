@@ -7,8 +7,8 @@ conn = mysql.connector.connect(user='root', password='Antonis2008Root!', host='1
 cursor = conn.cursor(buffered=True)
 cursor.execute("USE books")
 
-#df=pd.read_sql_query("SELECT * FROM bx_book_ratings",conn)
-#print(df)
+df=pd.read_sql_query("SELECT * FROM bx_users",conn)
+print(df)
 
 
 def csim(u, v):
@@ -32,9 +32,6 @@ def calc_neighbourhood(s, k):
 #my_list = [[int(float(x)) for x in i] for i in csv.reader(y)]
 #print(my_list)
 
-
-x = pd.read_csv('BX_Book_Ratings.csv')
-y=x.drop('ISBN',axis=1).values.tolist()
 
 
 
