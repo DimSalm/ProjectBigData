@@ -34,7 +34,7 @@ filter2 = ratings['ISBN'].str.contains("(\d{9}(\d|X|x))")
 ratingsclean1 = ratings[filter2]
 #print(ratingsclean1)
 
-#clean users: drop age where age>85 and age<18
+#clean users: drop age where age>85 and age<18 adults only
 usersclean1 = users[~(users['Age']>85)]
 usersclean2 = usersclean1[~(usersclean1['Age']<18)]
 #print(usersclean2)
@@ -61,25 +61,25 @@ authorpop = bru1.groupby(['Book-Author'])[['Book-Rating']].count().sort_values([
 
 #How many books each age group has read
 bru2 = pd.merge(users_clean,ratings_clean)
-agegroups = pd.cut(bru2['Age'], bins=[17, 20, 40, 60, 80, 95])
+agegroups = pd.cut(bru2['Age'], bins=[17, 30, 45, 60, 75, 85])
 ageranges = bru2.groupby(agegroups)[['Book-Rating']].count().sort_values(['Book-Rating'],ascending=False)
 #print('Books read per Age group:\n', ageranges)
 
 #BX-Book-Rating Outlier detection where rating=0
 booksread = ratings_clean[~(ratings_clean['Book-Rating']==0)]
 
-#BX-Book-Rating outlier detection where number of times the book has read is up to 4
+#BX-Book-Rating outlier detection where number of times the book has read is above average
 booksread2=booksread.groupby(['ISBN'])[['Book-Rating']].count()
-booksread3=booksread2[booksread2['Book-Rating'] > 4].reset_index()
+booksread3=booksread2[booksread2['Book-Rating'] > booksread.groupby('ISBN')['Book-Rating'].count().mean()].reset_index()
 ratingsfinal = booksread[booksread['ISBN'].isin(booksread3['ISBN'])]
 #print(ratingsfinal)
 
-#BX-User outlier detection: take out users with 1 rating that have voted a book which has  less than 40 total ratings
+#BX-User outlier detection: take out users with less than the average books read that have voted a book which has  less 10 times the average times a book has been read in order to be popular enough
 x1=ratingsfinal.groupby('User-ID')[['Book-Rating']].count()
 x2=ratingsfinal.groupby('ISBN')[['Book-Rating']].count()
-x3= x1[x1['Book-Rating'] < 4].reset_index()
-x4=x2[x2['Book-Rating'] < 40].reset_index()
-ratingsoutliers = ratingsfinal[~(ratingsfinal['User-ID'].isin(x3['User-ID']) & ratingsfinal['ISBN'].isin(x4['ISBN']))]
+x3= x1[x1['Book-Rating'] < ratingsfinal.groupby('User-ID')['Book-Rating'].count().mean()].reset_index()
+x4=x2[x2['Book-Rating'] < 10*ratingsfinal.groupby('ISBN')['Book-Rating'].count().mean()].reset_index()
+ratingsoutliers = ratingsfinal[~((ratingsfinal['User-ID'].isin(x3['User-ID']) & (ratingsfinal['ISBN'].isin(x4['ISBN']))))]
 #print(ratingsoutliers)
 
 #BX-Books outlier detection: book outlier detection keep only commons from ratings outlier dataset
@@ -97,15 +97,14 @@ ratingsfinal= ratingsoutliers[ratingsoutliers['User-ID'].isin(usersread3['User-I
 #keep only the commons after outlier detection
 usersfinal = users1[users1['User-ID'].isin(ratingsfinal['User-ID'])]
 booksfinal= booksoutliers[booksoutliers['ISBN'].isin(ratingsfinal['ISBN'])]
-print(booksfinal)
-print(ratingsfinal)
-print(usersfinal)
 
 #dataframes with renamed colomnus so that sql recognize them
 booksfinal=booksfinal.rename(columns={'Book-Author':'Book_Author','Book-Title':'Book_Title','Year-Of-Publication':'Year_Of_Publication'})
 ratingsfinal=ratingsfinal.rename(columns={'User-ID':'User_ID','Book-Rating':'Book_Rating'})
 usersfinal=usersfinal.rename(columns={'User-ID':'User_ID'})
-
+#print(booksfinal)
+#print(ratingsfinal)
+#print(usersfinal)
 
 #dataframes to csv
 #booksfinal.to_csv(r'C:\Users\dimsa\Desktop\ProjectBigData\BX_Books.csv',index=False,na_rep='NULL')
