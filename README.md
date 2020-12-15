@@ -20,5 +20,4 @@ Running order:
 PartA: 
 step1cleaningData.py , step2reocommender.py , step3tosql.py , step4improving.py
 
-PartB:  
-partB.py
+PartB:  partB.py
