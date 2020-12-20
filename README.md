@@ -26,6 +26,8 @@ The directory you will insert on all sections should be in C:/.../.../.../ forma
 
 on step5partb.py you will also be asked to enter your directory(insert your main directory)
 
+The file with the 45 json files should be in the main directory and nothing should be saved inside that folder.
+
 
 
 
